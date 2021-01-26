@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTPAudio", "RTPAudio\RTPAudio.csproj", "{8A6A47EE-5C18-42B0-A773-2120E9EA56AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A6A47EE-5C18-42B0-A773-2120E9EA56AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A6A47EE-5C18-42B0-A773-2120E9EA56AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A6A47EE-5C18-42B0-A773-2120E9EA56AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A6A47EE-5C18-42B0-A773-2120E9EA56AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76933BE2-6148-4266-9348-A348A446923F}
+	EndGlobalSection
+EndGlobal
