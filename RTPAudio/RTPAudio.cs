@@ -24,22 +24,49 @@ namespace file_splitter
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
     */
+    /*
     public struct PacketBuilderParam
     {
         Random rand => new Random();
+
         public UInt32 timestamp => Convert.ToUInt32(rand.Next(999, 43576));
         public UInt16 sequence => Convert.ToUInt16(rand.Next(1000, 22545));
         public UInt16 frag_off;
+        
         public int dataperpacket => 500; //size of the payload. 
         public byte byte1;//has rtp_version, rtp_padding, rtp_extension, rtp_csources_count;
         public byte byte2; // has  rtp_marker, rtp_payload_type;
         public int rtp_identifier => rand.Next(1001, 1000000);
         public UInt32 rtp_csources;
+
+    }
+    */
+
+    public class PacketBuilderParam
+    {
+        public UInt32 timestamp;
+        public UInt16 sequence;
+        public UInt16 frag_off;
+        public int dataperpacket; //size of the payload. 
+        public byte byte1;//has rtp_version, rtp_padding, rtp_extension, rtp_csources_count;
+        public byte byte2; // has  rtp_marker, rtp_payload_type;
+        public int rtp_identifier;
+        public UInt32 rtp_csources;
         public UInt32 rtp_ssrc;
         public UInt32 rtp_csourcecount;
 
-    }
+        public PacketBuilderParam()
+        {
+            Random rand = new Random();
 
+            timestamp = Convert.ToUInt32(rand.Next(999, 43576));
+            sequence = Convert.ToUInt16(rand.Next(1000, 22545));
+            rtp_identifier = rand.Next(1001, 1000000);
+
+            dataperpacket = 500;
+            frag_off = 0;
+        }
+    }
 
     public class PacketBuilder
     {
@@ -51,11 +78,9 @@ namespace file_splitter
         public byte[] DEBUG_header;
         public byte[] DEBUG_packet;
         PacketBuilderParam packetinfo = new PacketBuilderParam();
-
-
-        int dataperpacket => packetinfo.dataperpacket;
         public PacketBuilder(string filepath)
         {
+            
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
             packets = BuildPacket(splitfiledata);
@@ -71,9 +96,9 @@ namespace file_splitter
 
                 while (remainingbytes != 0)
                 {
-                    byte[] temparray = new byte[dataperpacket];
+                    byte[] temparray = new byte[packetinfo.dataperpacket];
 
-                    if (remainingbytes < dataperpacket)
+                    if (remainingbytes < packetinfo.dataperpacket)
                     {
                         file.Read(temparray, 0, Convert.ToInt32(remainingbytes));
                         remainingbytes = remainingbytes - remainingbytes;
@@ -81,9 +106,9 @@ namespace file_splitter
                     }
                     else
                     {
-                        file.Read(temparray, 0, dataperpacket);
+                        file.Read(temparray, 0, packetinfo.dataperpacket);
 
-                        remainingbytes = remainingbytes - dataperpacket;
+                        remainingbytes = remainingbytes - packetinfo.dataperpacket;
 
                     }
 
@@ -95,24 +120,17 @@ namespace file_splitter
             return filepackets;
         }
 
-        Queue<byte[]> BuildPacket(Queue<byte[]> payload) //This whole method needs to be refactored ASAP. Suggested: pointers instead of bitconversion, buffer usage instead of whatever kind of bullshit we used to manipulate the arrays.
+        unsafe Queue<byte[]> BuildPacket(Queue<byte[]> payload) //This whole method needs to be refactored ASAP. Suggested: pointers instead of bitconversion, buffer usage instead of whatever kind of bullshit we used to manipulate the arrays.
         {
             packetinfo.frag_off = 0;
             int remainingpackets = payload.Count;
 
 
-            byte[] sequencebytes = new byte[2];
-            byte[] fragoffset = new byte[2];
-            byte[] timestampbytes = new byte[4];
-
             Queue<byte[]> packetlist = new Queue<byte[]>();
 
-            UInt16 sequence = packetinfo.sequence; // we shouldnt need to do this, fix this!
-            UInt32 timestamp = packetinfo.timestamp; //Ditto.
-
-
-            timestampbytes = BitConverter.GetBytes(timestamp);
-            Array.Reverse(timestampbytes, 0, 4);
+            ushort sequence = packetinfo.sequence;
+            uint timestamp = packetinfo.timestamp;
+            int identifier = packetinfo.rtp_identifier;
 
             packetinfo.byte1 = 0b_10_0_0_0001;
             packetinfo.byte2 = 0b_0_0_001110;
@@ -123,35 +141,68 @@ namespace file_splitter
             header[0] = packetinfo.byte1;
             header[1] = packetinfo.byte2;
 
-            Array.ConstrainedCopy(BitConverter.GetBytes(packetinfo.rtp_identifier), 0, header, 8, 4);
-            for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
+            fixed (byte* headerptr = header)
             {
-                byte[] packet = new byte[dataperpacket + 20];
+                ushort* sequenceptr = &sequence;
+                uint* timestampptr = &timestamp;
+                int* identifierptr = &identifier;
+                headerptr = *(headerptr + 2) ;
+                Buffer.MemoryCopy(sequenceptr, headerptr, 17, 2);
+                ReverseByteOrder(ref header, 0, 2);
+                
+                
+                
+                for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
+                {
+                    byte[] packet = new byte[packetinfo.dataperpacket + 20];
+                    fixed (byte* btrarray = packet)
+                    {
 
-                fragoffset = BitConverter.GetBytes(packetinfo.frag_off);
-                Array.Reverse(fragoffset);
+                    }
+                    /*
+                    fragoffset = BitConverter.GetBytes(packetinfo.frag_off);
+                    Array.Reverse(fragoffset);
 
-                sequencebytes = BitConverter.GetBytes(sequence);
-                Array.Reverse(sequencebytes, 0, 2);
+                    sequencebytes = BitConverter.GetBytes(sequence);
+                    Array.Reverse(sequencebytes, 0, 2);
 
-                timestampbytes = BitConverter.GetBytes(timestamp);
-                Array.Reverse(timestampbytes, 0, 4);
+                    timestampbytes = BitConverter.GetBytes(timestamp);
+                    Array.Reverse(timestampbytes, 0, 4);
 
-                Array.ConstrainedCopy(sequencebytes, 0, header, 2, 2);
-                Array.ConstrainedCopy(timestampbytes, 0, header, 4, 4);
-                Array.ConstrainedCopy(fragoffset, 0, header, 18, 2);
+                    Buffer.BlockCopy(sequencebytes, 0, header, 2, 2);
+                    Buffer.BlockCopy(timestampbytes, 0, header, 4, 4);
+                    Buffer.BlockCopy(fragoffset, 0, header, 18, 2);
 
-                Array.ConstrainedCopy(header, 0, packet, 0, 20);
+                    Buffer.BlockCopy(header, 0, packet, 0, 20);
 
-                Array.ConstrainedCopy(payload.Dequeue(), 0, packet, 20, dataperpacket);
+                    Buffer.BlockCopypayload.Dequeue(), 0, packet, 20, packetinfo.dataperpacket);
+                    */
 
-                packetlist.Enqueue(packet);
-                sequence++;
-                timestamp += 80; // 80 works for some reason, I still to this day have no clue why
-                packetinfo.frag_off += 0;
+                    packetlist.Enqueue(packet);
+                    sequence++;
+                    timestamp += 80; // 80 works for some reason, I still to this day have no clue why
+
+                }
+
             }
 
             return packetlist;
+        }
+        unsafe byte[] ReverseByteOrder(ref byte[] buffer, int index, int length)
+        {
+            
+                byte tmp;
+                
+
+                for(int x = 0; x < Math.Round((decimal) length / 2, 2); x++ )
+                {
+                    tmp = buffer[index + x];
+                    buffer[index + x] = buffer[length - 1 - x];
+                    buffer[length - 1 - x] = tmp;
+                }
+                return buffer;
+           
+            
         }
     }
     class Program
@@ -159,7 +210,7 @@ namespace file_splitter
         static Queue<byte[]>[] filestostream;
         static void Main()
         {
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\lasse\source\repos\RTPTesting\AetherRealmSunMoonStar.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.107"), 8080);
