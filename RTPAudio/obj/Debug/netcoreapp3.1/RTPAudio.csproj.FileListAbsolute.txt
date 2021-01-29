@@ -1,0 +1,13 @@
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.exe
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.deps.json
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.runtimeconfig.json
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.runtimeconfig.dev.json
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.dll
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.pdb
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.csprojAssemblyReference.cache
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.AssemblyInfoInputs.cache
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.AssemblyInfo.cs
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.csproj.CoreCompileInputs.cache
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.dll
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.pdb
+C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.genruntimeconfig.cache

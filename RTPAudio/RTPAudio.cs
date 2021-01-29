@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace file_splitter
 {
@@ -135,8 +136,6 @@ namespace file_splitter
             packetinfo.byte1 = 0b_10_0_0_0001;
             packetinfo.byte2 = 0b_0_0_001110;
 
-
-
             byte[] header = new byte[20];
             header[0] = packetinfo.byte1;
             header[1] = packetinfo.byte2;
@@ -146,11 +145,19 @@ namespace file_splitter
                 ushort* sequenceptr = &sequence;
                 uint* timestampptr = &timestamp;
                 int* identifierptr = &identifier;
-                headerptr = *(headerptr + 2) ;
-                Buffer.MemoryCopy(sequenceptr, headerptr, 17, 2);
+                byte* headeroffsetptr = headerptr;
+
+                Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 17, sizeof(ushort));
+
+                headeroffsetptr += 2;
+
+                Buffer.MemoryCopy(timestampptr, headeroffsetptr, 17, sizeof(uint));
+
+                headeroffsetptr += 4;
+
+                Buffer.MemoryCopy(identifierptr, headeroffsetptr, 17, sizeof(int));
+
                 ReverseByteOrder(ref header, 0, 2);
-                
-                
                 
                 for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
                 {
@@ -210,7 +217,10 @@ namespace file_splitter
         static Queue<byte[]>[] filestostream;
         static void Main()
         {
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
+            Stopwatch timed = new Stopwatch();
+            timed.Start();
+
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.107"), 8080);
@@ -224,9 +234,14 @@ namespace file_splitter
             int remainingpackets = DEBUG_packets.Count;
             for (int x = 0; x < remainingpackets; x++)
             {
-                Console.WriteLine("Packet {0} sent.", x);
+                // Console.WriteLine("Packet {0} sent.", x);
                 sender.SendTo(DEBUG_packets.Dequeue(), SendtoEP);
             }
+
+            timed.Stop();
+            TimeSpan timeexe = timed.Elapsed;
+
+            Console.WriteLine("Elapsed: " + timeexe.TotalMilliseconds + "ms");
         }
     }
 }
