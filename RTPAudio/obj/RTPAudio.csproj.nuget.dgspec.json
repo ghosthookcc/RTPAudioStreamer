@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\19kathor\\Desktop\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {}
+    "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {}
   },
   "projects": {
-    "C:\\Users\\19kathor\\Desktop\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {
+    "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\19kathor\\Desktop\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
+        "projectUniqueName": "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
         "projectName": "RTPAudio",
-        "projectPath": "C:\\Users\\19kathor\\Desktop\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
-        "packagesPath": "C:\\Users\\19kathor\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\19kathor\\Desktop\\RTPAudioStreamer\\RTPAudio\\obj\\",
+        "projectPath": "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
+        "packagesPath": "C:\\Users\\19erlind\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\19kathor\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\19erlind\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -55,7 +55,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.405\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

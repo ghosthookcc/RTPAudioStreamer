@@ -140,25 +140,29 @@ namespace file_splitter
             header[0] = packetinfo.byte1;
             header[1] = packetinfo.byte2;
 
-            fixed (byte* headerptr = header)
+            fixed (byte* headerptr = &header[2])
             {
                 ushort* sequenceptr = &sequence;
                 uint* timestampptr = &timestamp;
                 int* identifierptr = &identifier;
                 byte* headeroffsetptr = headerptr;
 
-                Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 17, sizeof(ushort));
+                long safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
+
+                Buffer.MemoryCopy(sequenceptr, headeroffsetptr, safebytes, sizeof(ushort));
+                ReverseByteOrder(ref header, 2, 2);
 
                 headeroffsetptr += 2;
+                safebytes = (int)((int)20 - (headeroffsetptr - headerptr));
 
-                Buffer.MemoryCopy(timestampptr, headeroffsetptr, 17, sizeof(uint));
-
+                Buffer.MemoryCopy(timestampptr, headeroffsetptr, safebytes, sizeof(uint));
+                ReverseByteOrder(ref header, 4, 4);
                 headeroffsetptr += 4;
+                safebytes = (int)((int)20 - (headeroffsetptr - headerptr));
+                Buffer.MemoryCopy(identifierptr, headeroffsetptr, safebytes, sizeof(int));
+                ReverseByteOrder(ref header, 8, 4);
 
-                Buffer.MemoryCopy(identifierptr, headeroffsetptr, 17, sizeof(int));
 
-                ReverseByteOrder(ref header, 0, 2);
-                
                 for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
                 {
                     byte[] packet = new byte[packetinfo.dataperpacket + 20];
@@ -220,7 +224,7 @@ namespace file_splitter
             Stopwatch timed = new Stopwatch();
             timed.Start();
 
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\19kathor\Desktop\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\19erlind\Desktop\SuperNova Website\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.107"), 8080);
