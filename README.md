@@ -1,12 +1,6 @@
 # RTPAudioStreamer
 Stream audio with RTP
 
-TODO For Optimisation:
+This is a version of the program using pointers for data manipulation.
 
--Use a better method to create a byte buffer and reduce required conversions (pointers, buffer.....)
-
--fix redudancy
-
--depend less on hardcoded value, use mp3 headers to determine frame, bitrate, ect....
-
--More!
+While originally meant to be an attempt to optimise the code, it did not result in any actual improvement and therefore is now simply as a way to experiment with pointers.
