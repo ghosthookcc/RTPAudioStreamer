@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace file_splitter
 {
@@ -65,9 +66,14 @@ namespace file_splitter
         int dataperpacket => packetinfo.dataperpacket;
         public PacketBuilder(string filepath)
         {
+            Stopwatch timer = new Stopwatch();
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
+            timer.Start();
             packets = BuildPacket(splitfiledata);
+            timer.Stop();
+            TimeSpan timed = timer.Elapsed;
+            Console.WriteLine("Function Executed in : {0} ms", timed.TotalMilliseconds);
         }
         Queue<byte[]> BuildPayload(string path)
         {
@@ -160,7 +166,7 @@ namespace file_splitter
         static void Main()
         {
             //  PacketBuilder packets = new PacketBuilder(@"pathtofile\RTPAudio\UnlikePlutoEverythingBlack.mp3");
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\lasse\source\repos\RTPAudioStreamer-main\RTPAudio\UnlikePlutoEverythingBlack.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.107"), 8080);

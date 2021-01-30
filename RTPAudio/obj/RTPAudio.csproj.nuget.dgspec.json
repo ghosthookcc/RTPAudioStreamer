@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Erik\\source\\repos\\RTPAudio\\RTPAudio\\RTPAudio.csproj": {}
+    "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Erik\\source\\repos\\RTPAudio\\RTPAudio\\RTPAudio.csproj": {
+    "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Erik\\source\\repos\\RTPAudio\\RTPAudio\\RTPAudio.csproj",
+        "projectUniqueName": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
         "projectName": "RTPAudio",
-        "projectPath": "C:\\Users\\Erik\\source\\repos\\RTPAudio\\RTPAudio\\RTPAudio.csproj",
+        "projectPath": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
         "packagesPath": "C:\\Users\\Erik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Erik\\source\\repos\\RTPAudio\\RTPAudio\\obj\\",
+        "outputPath": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
