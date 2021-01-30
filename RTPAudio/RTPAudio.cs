@@ -82,10 +82,16 @@ namespace file_splitter
         PacketBuilderParam packetinfo = new PacketBuilderParam();
         public PacketBuilder(string filepath)
         {
+            Stopwatch timed = new Stopwatch();
             
+
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
+            timed.Start();
             packets = BuildPacket(ref splitfiledata);
+            timed.Stop();
+            TimeSpan timeexe = timed.Elapsed;
+            Console.WriteLine("Function Executed in {0} ms", timeexe.TotalMilliseconds);
         }
         Queue<byte[]> BuildPayload(string path)
         {
@@ -180,24 +186,6 @@ namespace file_splitter
 
                     Buffer.BlockCopy(header, 0, packet, 0, header.Length);
                     Buffer.BlockCopy(payload.Dequeue(), 0, packet, header.Length, packetinfo.dataperpacket);
-                    /*
-                    fragoffset = BitConverter.GetBytes(packetinfo.frag_off);
-                    Array.Reverse(fragoffset);
-
-                    sequencebytes = BitConverter.GetBytes(sequence);
-                    Array.Reverse(sequencebytes, 0, 2);
-
-                    timestampbytes = BitConverter.GetBytes(timestamp);
-                    Array.Reverse(timestampbytes, 0, 4);
-
-                    Buffer.BlockCopy(sequencebytes, 0, header, 2, 2);
-                    Buffer.BlockCopy(timestampbytes, 0, header, 4, 4);
-                    Buffer.BlockCopy(fragoffset, 0, header, 18, 2);
-
-                    Buffer.BlockCopy(header, 0, packet, 0, 20);
-
-                    Buffer.BlockCopypayload.Dequeue(), 0, packet, 20, packetinfo.dataperpacket);
-                    */
 
                     packetlist.Enqueue(packet);
                     ++*sequenceptr;
@@ -227,11 +215,7 @@ namespace file_splitter
                 *ptr2 = tmp;
                 ptr1++;
                 ptr2--;
-                /*
-                    tmp = buffer[index + x];
-                    buffer[index + x] = buffer[length - 1 - x];
-                    buffer[length - 1 - x] = tmp;
-                */
+
                 }
            
             
@@ -240,10 +224,11 @@ namespace file_splitter
     class Program
     {
         static Queue<byte[]>[] filestostream;
+       
         static void Main()
         {
-            Stopwatch timed = new Stopwatch();
-            timed.Start();
+            
+            
 
             PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
@@ -263,10 +248,6 @@ namespace file_splitter
                 sender.SendTo(DEBUG_packets.Dequeue(), SendtoEP);
             }
 
-            timed.Stop();
-            TimeSpan timeexe = timed.Elapsed;
-
-            Console.WriteLine("Elapsed: " + timeexe.TotalMilliseconds + "ms");
         }
     }
 }
