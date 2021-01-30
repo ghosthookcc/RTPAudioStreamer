@@ -154,19 +154,15 @@ namespace file_splitter
                 int* identifierptr = &identifier;
                 byte* headeroffsetptr = headerptr;
 
-                long safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
-
-                Buffer.MemoryCopy(sequenceptr, headeroffsetptr, safebytes, sizeof(ushort));
+                Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 3, sizeof(ushort));
                 ReverseByteOrder(headeroffsetptr, 2);
 
                 headeroffsetptr += 2;
-                safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
 
-                Buffer.MemoryCopy(timestampptr, headeroffsetptr, safebytes, sizeof(uint));
+                Buffer.MemoryCopy(timestampptr, headeroffsetptr, 5, sizeof(uint));
                 ReverseByteOrder(headeroffsetptr, 4);
                 headeroffsetptr += 4;
-                safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
-                Buffer.MemoryCopy(identifierptr, headeroffsetptr, safebytes, sizeof(int));
+                Buffer.MemoryCopy(identifierptr, headeroffsetptr, 5, sizeof(int));
                 ReverseByteOrder(headeroffsetptr, 4);
 
 
@@ -175,11 +171,11 @@ namespace file_splitter
                     byte[] packet = new byte[packetinfo.dataperpacket + header.Length];
 
                     headeroffsetptr = headerptr;
-                    Buffer.MemoryCopy(sequenceptr, headeroffsetptr, safebytes, sizeof(ushort));
+                    Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 5, sizeof(ushort));
                     ReverseByteOrder(headeroffsetptr, sizeof(ushort));
                     headeroffsetptr += 2;
 
-                    Buffer.MemoryCopy(timestampptr, headeroffsetptr, safebytes, sizeof(uint));
+                    Buffer.MemoryCopy(timestampptr, headeroffsetptr, 5, sizeof(uint));
                     ReverseByteOrder(headeroffsetptr, sizeof(uint));
 
 
