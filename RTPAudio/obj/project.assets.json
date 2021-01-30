@@ -8,23 +8,23 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "C:\\Users\\19erlind\\.nuget\\packages\\": {},
+    "C:\\Users\\Erik\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
+      "projectUniqueName": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
       "projectName": "RTPAudio",
-      "projectPath": "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
-      "packagesPath": "C:\\Users\\19erlind\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\19erlind\\Desktop\\SuperNova Website\\RTPAudioStreamer\\RTPAudio\\obj\\",
+      "projectPath": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
+      "packagesPath": "C:\\Users\\Erik\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\19erlind\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Erik\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -36,6 +36,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {}
         }
       },
@@ -47,6 +48,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "imports": [
           "net461",
           "net462",
@@ -62,7 +64,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

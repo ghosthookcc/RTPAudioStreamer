@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace file_splitter
 {
@@ -84,7 +85,7 @@ namespace file_splitter
             
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
-            packets = BuildPacket(splitfiledata);
+            packets = BuildPacket(ref splitfiledata);
         }
         Queue<byte[]> BuildPayload(string path)
         {
@@ -121,7 +122,7 @@ namespace file_splitter
             return filepackets;
         }
 
-        unsafe Queue<byte[]> BuildPacket(Queue<byte[]> payload) //This whole method needs to be refactored ASAP. Suggested: pointers instead of bitconversion, buffer usage instead of whatever kind of bullshit we used to manipulate the arrays.
+        unsafe Queue<byte[]> BuildPacket(ref Queue<byte[]> payload) //This whole method needs to be refactored ASAP. Suggested: pointers instead of bitconversion, buffer usage instead of whatever kind of bullshit we used to manipulate the arrays.
         {
             packetinfo.frag_off = 0;
             int remainingpackets = payload.Count;
@@ -150,26 +151,35 @@ namespace file_splitter
                 long safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
 
                 Buffer.MemoryCopy(sequenceptr, headeroffsetptr, safebytes, sizeof(ushort));
-                ReverseByteOrder(ref header, 2, 2);
+                ReverseByteOrder(headeroffsetptr, 2);
 
                 headeroffsetptr += 2;
-                safebytes = (int)((int)20 - (headeroffsetptr - headerptr));
+                safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
 
                 Buffer.MemoryCopy(timestampptr, headeroffsetptr, safebytes, sizeof(uint));
-                ReverseByteOrder(ref header, 4, 4);
+                ReverseByteOrder(headeroffsetptr, 4);
                 headeroffsetptr += 4;
-                safebytes = (int)((int)20 - (headeroffsetptr - headerptr));
+                safebytes = (int)((int)18 - (headeroffsetptr - headerptr));
                 Buffer.MemoryCopy(identifierptr, headeroffsetptr, safebytes, sizeof(int));
-                ReverseByteOrder(ref header, 8, 4);
+                ReverseByteOrder(headeroffsetptr, 4);
 
 
                 for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
                 {
-                    byte[] packet = new byte[packetinfo.dataperpacket + 20];
-                    fixed (byte* btrarray = packet)
-                    {
+                    byte[] packet = new byte[packetinfo.dataperpacket + header.Length];
 
-                    }
+                    headeroffsetptr = headerptr;
+                    Buffer.MemoryCopy(sequenceptr, headeroffsetptr, safebytes, sizeof(ushort));
+                    ReverseByteOrder(headeroffsetptr, sizeof(ushort));
+                    headeroffsetptr += 2;
+
+                    Buffer.MemoryCopy(timestampptr, headeroffsetptr, safebytes, sizeof(uint));
+                    ReverseByteOrder(headeroffsetptr, sizeof(uint));
+
+
+
+                    Buffer.BlockCopy(header, 0, packet, 0, header.Length);
+                    Buffer.BlockCopy(payload.Dequeue(), 0, packet, header.Length, packetinfo.dataperpacket);
                     /*
                     fragoffset = BitConverter.GetBytes(packetinfo.frag_off);
                     Array.Reverse(fragoffset);
@@ -190,8 +200,8 @@ namespace file_splitter
                     */
 
                     packetlist.Enqueue(packet);
-                    sequence++;
-                    timestamp += 80; // 80 works for some reason, I still to this day have no clue why
+                    ++*sequenceptr;
+                    *timestampptr += 80; // 80 works for some reason, I still to this day have no clue why
 
                 }
 
@@ -199,19 +209,30 @@ namespace file_splitter
 
             return packetlist;
         }
-        unsafe byte[] ReverseByteOrder(ref byte[] buffer, int index, int length)
+        unsafe void ReverseByteOrder( byte* indptr, int length)
         {
             
-                byte tmp;
-                
+            byte tmp;
+            byte* ptr1 = indptr;
+            byte* ptr2 = indptr;
+            ptr2 = ptr2  + length - 1;
 
-                for(int x = 0; x < Math.Round((decimal) length / 2, 2); x++ )
+
+
+            for (int x = 0; x < Math.Round((decimal) length / 2, 2); x++ )
                 {
+
+                tmp = *ptr1;
+                *ptr1 = *ptr2;
+                *ptr2 = tmp;
+                ptr1++;
+                ptr2--;
+                /*
                     tmp = buffer[index + x];
                     buffer[index + x] = buffer[length - 1 - x];
                     buffer[length - 1 - x] = tmp;
+                */
                 }
-                return buffer;
            
             
         }
@@ -224,10 +245,10 @@ namespace file_splitter
             Stopwatch timed = new Stopwatch();
             timed.Start();
 
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\19erlind\Desktop\SuperNova Website\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
-            EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.107"), 8080);
+            EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.10.160"), 8080);
 
             Socket sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
