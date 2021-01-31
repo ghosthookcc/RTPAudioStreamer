@@ -37,3 +37,16 @@ C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1
 C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.dll
 C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.pdb
 C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.genruntimeconfig.cache
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.exe
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.deps.json
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.runtimeconfig.json
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.runtimeconfig.dev.json
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.dll
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\bin\Debug\netcoreapp3.1\RTPAudio.pdb
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.csprojAssemblyReference.cache
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.AssemblyInfoInputs.cache
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.AssemblyInfo.cs
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.csproj.CoreCompileInputs.cache
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.dll
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.pdb
+C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\obj\Debug\netcoreapp3.1\RTPAudio.genruntimeconfig.cache
