@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.Threading;
 
 namespace file_splitter
 {
@@ -38,23 +39,26 @@ namespace file_splitter
         public UInt32 rtp_ssrc;
         public UInt32 rtp_csourcecount;
 
-        public float PacketizationTime;
+        public float PacketizationTime, FrameSizeInMS;
+        public float SampleRate;
 
         public PacketBuilderParam()
         {
             Random rand = new Random();
 
-            timestamp = Convert.ToUInt32(rand.Next(999, 43576));
-            sequence = Convert.ToUInt16(rand.Next(1000, 22545));
-            rtp_identifier = rand.Next(1001, 1000000);
+            timestamp = Convert.ToUInt32(rand.Next(999, 1000)); // A random value that increments by a dynamically calculated value (increment value is consant)
+            sequence = Convert.ToUInt16(rand.Next(1001, 22545)); // A random value that increments by 1 for each following packet
+            rtp_identifier = rand.Next(1001, 1000000); // Unique identifer to distinguish between rtp streams
 
-            int clockrate = 90000; // RTP clockrate is a constant of 90khz
+            int SamplesPerFrame = 1152;
             int BitRate = 125 * 192; // Multiply 1kb with the bitrate (bitrate for mpeg 1 layer 3 is 192 or 128)
-            int SampleRate = 44100; // Sample rate of 441000 is enough, after this there is no noticable difference for most humans
 
-            dataperpacket = (144 * BitRate / SampleRate + 0) * 10; // If padding is set it would be added to the end here but it will never be set
-            PacketizationTime = 40; // This number has no logic behind it, needs to be reworked to dynamically scale with the program
-            frag_off = 0;
+            SampleRate = 44100; // Sample rate of 441000 is enough, after this there is no noticable difference for most humans
+            FrameSizeInMS = (float)(SamplesPerFrame / SampleRate) * 1000;
+
+            dataperpacket = (int)(SamplesPerFrame * BitRate / (SampleRate + 0)); // If padding is set it would be added to the end here but it will never be set
+            PacketizationTime = 1000 / FrameSizeInMS;  // This signifies the amount of frames in a second (fps)
+            frag_off = 0; // This value never changes for audio and is therefore 0
         }
     }
 
@@ -69,18 +73,12 @@ namespace file_splitter
         public byte[] DEBUG_header;
         public byte[] DEBUG_packet;
 
-        PacketBuilderParam packetinfo = new PacketBuilderParam();
+        public PacketBuilderParam packetinfo = new PacketBuilderParam();
         public PacketBuilder(string filepath)
         {
-            Stopwatch timed = new Stopwatch();
-
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
-
-            timed.Start();
             packets = BuildPacket(ref splitfiledata);
-            TimeSpan timexe = timed.Elapsed;
-            Console.WriteLine("Function execution - time elapsed {0}ms", timexe.TotalMilliseconds);
         }
 
         Queue<byte[]> BuildPayload(string path)
@@ -98,6 +96,7 @@ namespace file_splitter
                     if (remainingbytes < packetinfo.dataperpacket)
                     {
                         file.Read(temparray, 0, Convert.ToInt32(remainingbytes));
+     
                         remainingbytes = remainingbytes - remainingbytes;
                     }
                     else
@@ -114,7 +113,7 @@ namespace file_splitter
             return filepackets;
         }
 
-        unsafe Queue<byte[]> BuildPacket(ref Queue<byte[]> payload) //This whole method needs to be refactored ASAP. Suggested: pointers instead of bitconversion, buffer usage instead of whatever kind of bullshit we used to manipulate the arrays.
+        unsafe Queue<byte[]> BuildPacket(ref Queue<byte[]> payload) 
         {
             int remainingpackets = payload.Count;
 
@@ -145,7 +144,7 @@ namespace file_splitter
 
                 Buffer.MemoryCopy(timestampptr, headeroffsetptr, 5, sizeof(uint));
                 ReverseByteOrder(headeroffsetptr, 4);
-                
+
                 headeroffsetptr += 4;
 
                 Buffer.MemoryCopy(identifierptr, headeroffsetptr, 5, sizeof(int));
@@ -156,7 +155,7 @@ namespace file_splitter
                     byte[] packet = new byte[packetinfo.dataperpacket + header.Length];
 
                     headeroffsetptr = headerptr;
-                    
+
                     Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 5, sizeof(ushort));
                     ReverseByteOrder(headeroffsetptr, sizeof(ushort));
 
@@ -171,7 +170,7 @@ namespace file_splitter
                     packetlist.Enqueue(packet);
 
                     ++*sequenceptr;
-                    *timestampptr += (uint)(1000 / packetinfo.PacketizationTime); // PacketizationTime is not a dynamically scaling number atm (needs to be implemented)
+                    *timestampptr += (uint)(packetinfo.SampleRate / packetinfo.PacketizationTime);
                 }
             }
 
@@ -183,9 +182,9 @@ namespace file_splitter
             byte tmp;
             byte* ptr1 = indptr;
             byte* ptr2 = indptr;
-            ptr2 = ptr2  + length - 1;
+            ptr2 = ptr2 + length - 1;
 
-            for (int x = 0; x < Math.Round((decimal) length / 2, 2); x++ )
+            for (int x = 0; x < Math.Round((decimal)length / 2, 2); x++)
             {
                 tmp = *ptr1;
                 *ptr1 = *ptr2;
@@ -199,13 +198,10 @@ namespace file_splitter
     class Program
     {
         static Queue<byte[]>[] filestostream;
-       
+
         static void Main()
         {
-            Stopwatch timed = new Stopwatch();
-            timed.Start();
-
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\{yourusername}\Desktop\RTPAudioStreamer\RTPAudio\testaudio.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.90"), 8080);
@@ -220,13 +216,9 @@ namespace file_splitter
 
             for (int x = 0; x < remainingpackets; x++)
             {
-                Console.WriteLine("Sent packet {0}", x);
+                Thread.Sleep((int)packets.packetinfo.FrameSizeInMS / 2); // 2 is wtf
                 sender.SendTo(DEBUG_packets.Dequeue(), SendtoEP);
             }
-            timed.Stop();
-
-            TimeSpan timexe = timed.Elapsed;
-            Console.WriteLine("RTP Packet sending - time elapsed: {0}ms", timexe.TotalMilliseconds);
         }
     }
 }
