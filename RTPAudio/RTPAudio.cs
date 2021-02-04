@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using System.Threading;
+using RTPAudio.AudioUtils;
 
 namespace file_splitter
 {
@@ -46,9 +47,9 @@ namespace file_splitter
         {
             Random rand = new Random();
 
-            timestamp = Convert.ToUInt32(rand.Next(999, 1000)); // A random value that increments by a dynamically calculated value (increment value is consant)
-            sequence = Convert.ToUInt16(rand.Next(1001, 22545)); // A random value that increments by 1 for each following packet
-            rtp_identifier = rand.Next(1001, 1000000); // Unique identifer to distinguish between rtp streams
+            timestamp = Convert.ToUInt32(rand.Next(999, 47645)); // A random value that increments by a dynamically calculated value (increment value is consant)
+            sequence = Convert.ToUInt16(rand.Next(1000, 22745)); // A random value that increments by 1 for each following packet
+            rtp_identifier = rand.Next(1001, 200000845); // Unique identifer to distinguish between rtp streams
 
             int SamplesPerFrame = 1152;
             int BitRate = 125 * 192; // Multiply 1kb with the bitrate (bitrate for mpeg 1 layer 3 is 192 or 128)
@@ -69,13 +70,15 @@ namespace file_splitter
         public Queue<byte[]> splitfiledata;
         public Queue<byte[]> Headerqueue;
         public Queue<byte[]> packets;
-
+        
         public byte[] DEBUG_header;
         public byte[] DEBUG_packet;
 
+        MP3Utils mp3parser = new MP3Utils();
         public PacketBuilderParam packetinfo = new PacketBuilderParam();
         public PacketBuilder(string filepath)
         {
+            mp3parser.Open(filepath);
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
             packets = BuildPacket(ref splitfiledata);
@@ -201,7 +204,7 @@ namespace file_splitter
 
         static void Main()
         {
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\kaspe\OneDrive\Desktop\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\01 Key.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.90"), 8080);
