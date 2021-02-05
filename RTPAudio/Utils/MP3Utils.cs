@@ -37,6 +37,7 @@ namespace RTPAudio.AudioUtils
             public byte[] ID3ver;
             public BitArray ID3Flags;
             public BitVector32 ID3size;
+
             public BitVector32.Section[] ID3size_sections = new BitVector32.Section[4];
 
             public Mp3Data()
@@ -83,7 +84,9 @@ namespace RTPAudio.AudioUtils
 
                     Mp3info.hasID3 = true;
                     file.Read(Mp3info.ID3ver, 0, 2);
+
                     Mp3info.ID3Flags = new BitArray((byte)file.ReadByte());
+
                     file.Read(size, 0, 4);
                     for(int x = size.Length - 1; x >= 0; x--)
                     {

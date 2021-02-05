@@ -6,6 +6,48 @@ namespace RTPAudio.Utils
 {
     class GeneralUtils
     {
-    // Empty for now, Array Reverse will be implemented here later
+        // all byte ot int conversion are based on Big Endian. For Little Endian use normal C# functions.
+        public byte[] UInt32ToByte(uint input)
+        {
+            
+            byte[] output = new byte[4];
+
+            output[0] = (byte)(input >> 24);
+            output[1] = (byte)(input >> 16);
+            output[2] = (byte)(input >> 8);
+            output[3] = (byte)(input >> 0);
+
+
+            return output;
+        }
+        public uint ByteToUInt32(byte[] array)
+        {
+            uint output = (uint)(array[0] << 24 | array[1] << 16 | array[2] << 8 | array[3]);
+
+            return output;
+        }
+
+        public ushort ByteToUInt16(byte[] array)
+        {
+            ushort output = (ushort)(array[0] << 8 | array[1]);
+
+            return output;
+        }
+        public byte[] UInt16ToByte(ushort input)
+        {
+
+            byte[] output = new byte[2];
+
+            output[0] = (byte)(input >> 8);
+            output[1] = (byte)(input >> 0);
+
+
+            return output;
+        }
+
+        public GeneralUtils()
+        {
+
+        }
     }
-}
+}   

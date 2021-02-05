@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.Threading;
 using RTPAudio.AudioUtils;
+using RTPAudio.Utils;
 
 namespace file_splitter
 {
@@ -75,6 +76,7 @@ namespace file_splitter
         public byte[] DEBUG_packet;
 
         MP3Utils mp3parser = new MP3Utils();
+        GeneralUtils utils = new GeneralUtils();
         public PacketBuilderParam packetinfo = new PacketBuilderParam();
         public PacketBuilder(string filepath)
         {
@@ -118,6 +120,7 @@ namespace file_splitter
 
         unsafe Queue<byte[]> BuildPacket(ref Queue<byte[]> payload) 
         {
+            
             int remainingpackets = payload.Count;
 
             Queue<byte[]> packetlist = new Queue<byte[]>();
@@ -142,6 +145,11 @@ namespace file_splitter
 
                 Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 3, sizeof(ushort));
                 ReverseByteOrder(headeroffsetptr, 2);
+                Stopwatch memes = Stopwatch.StartNew();
+                byte[] ayyylmao = utils.UInt16ToByte(*sequenceptr);
+                memes.Stop();
+                TimeSpan ts = memes.Elapsed;
+                Console.WriteLine(ts.TotalMilliseconds);
 
                 headeroffsetptr += 2;
 
@@ -152,6 +160,7 @@ namespace file_splitter
 
                 Buffer.MemoryCopy(identifierptr, headeroffsetptr, 5, sizeof(int));
                 ReverseByteOrder(headeroffsetptr, 4);
+                
 
                 for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
                 {
@@ -207,7 +216,7 @@ namespace file_splitter
             PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\01 Key.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
-            EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.1.90"), 8080);
+            EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.10.160"), 8080);
 
             Socket sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
