@@ -76,7 +76,6 @@ namespace file_splitter
         public byte[] DEBUG_packet;
 
         MP3Utils mp3parser = new MP3Utils();
-        GeneralUtils utils = new GeneralUtils();
         public PacketBuilderParam packetinfo = new PacketBuilderParam();
         public PacketBuilder(string filepath)
         {
@@ -146,7 +145,7 @@ namespace file_splitter
                 Buffer.MemoryCopy(sequenceptr, headeroffsetptr, 3, sizeof(ushort));
                 ReverseByteOrder(headeroffsetptr, 2);
                 Stopwatch memes = Stopwatch.StartNew();
-                byte[] ayyylmao = utils.UInt16ToByte(*sequenceptr);
+                byte[] ayyylmao = GeneralUtils.UInt16ToByte(*sequenceptr);
                 memes.Stop();
                 TimeSpan ts = memes.Elapsed;
                 Console.WriteLine(ts.TotalMilliseconds);

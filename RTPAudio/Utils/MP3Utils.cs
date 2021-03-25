@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using RTPAudio.Utils;
 using System.Text;
+using System.Linq;
 
 namespace RTPAudio.AudioUtils
 {
@@ -12,22 +14,35 @@ namespace RTPAudio.AudioUtils
         //This Class Contains Functions and tools to determine information from MP3 files such as Bit Rate, Sampling, ect..... This should ONLY be used for the mp3 standard up to Version 2.5.
         public class Mp3Data
         {
+            static readonly int[,] samplingratetable = new int[4, 4] {
+                { 11025 , 12000, 8000, 0 }, // MPEGIIV
+                { 0, 0, 0, 0 }, // Reserved
+                { 44100, 48000, 32000, 0 }, // MPEGI
+                { 22050, 24000, 16000, 0 } }; // MPEGII
             enum Version
             {
-                MPEGI = 1,
-                MPEGII = 2,
-                MPEGIIdotV = 3, //Version 2.5
+                Reserved = 1, // Not Valid.
+                MPEGIIdotV = 0, //Version 2.5
+                MPEGI = 2,
+                MPEGII = 3,
+                
 
             }
             enum Layer
             {
+
+                Reserved = 0, // Not Valid.
                 LayerI = 1,
                 LayerII = 2,
                 LayerIII = 3,
             }
+
+
             public string file;
             Version version;
             Layer layer;
+            bool protection;
+            bool padding;
 
             public int BitRate;
             public int SampleRate;
@@ -36,9 +51,11 @@ namespace RTPAudio.AudioUtils
             public bool hasID3;
             public byte[] ID3ver;
             public BitArray ID3Flags;
-            public BitVector32 ID3size;
+            uint ID3lengthnum;
+            
+            BitVector32 ID3size;
 
-            public BitVector32.Section[] ID3size_sections = new BitVector32.Section[4];
+            BitVector32.Section[] ID3size_sections = new BitVector32.Section[4];
 
             public Mp3Data()
             {
@@ -53,6 +70,17 @@ namespace RTPAudio.AudioUtils
 
                 }
 
+            }
+            public uint GetID3Size(byte[] data)
+            {
+
+                ID3lengthnum = (uint)ID3size.Data;
+                return (uint)ID3size.Data;
+            }
+
+            internal void GetHeaderData(byte[] header)
+            {
+                
             }
         }
 
@@ -74,9 +102,9 @@ namespace RTPAudio.AudioUtils
             {
                 byte[] isID3 = new byte[3];
                 file.Read(isID3, 0, 3);
-                
 
-                if(Encoding.ASCII.GetString(isID3) == "ID3")
+
+                if (Encoding.ASCII.GetString(isID3) == "ID3")
                 {
                     byte flags;
                     byte[] size = new byte[4];
@@ -88,20 +116,25 @@ namespace RTPAudio.AudioUtils
                     Mp3info.ID3Flags = new BitArray((byte)file.ReadByte());
 
                     file.Read(size, 0, 4);
-                    for(int x = size.Length - 1; x >= 0; x--)
-                    {
-                        Mp3info.ID3size[Mp3info.ID3size_sections[(Mp3info.ID3size_sections.GetLength(0) - 1) - x]] = size[x];
-
-                        
-
-                        
-
-                    }
-                    id3size = (uint)Mp3info.ID3size.Data;
+                    id3size = Mp3info.GetID3Size(size);
                     file.Position += id3size;
-                    byte[] header = new byte[3];
-                    file.Read(header, 0, 3);
-                    Console.WriteLine("It Just Works -Todd Howard");
+                    byte[] header = new byte[4];
+                    file.Read(header, 0, 4);
+                    if (header[0] == 255)
+                    {
+                        if(header[1] >> 5 == 7)
+                        {
+                            Mp3info.GetHeaderData(header);
+                        }
+                    }
+                    else
+                    {
+                       
+                        FindHeader(header,file);
+                    }
+
+
+                    
 
 
 
@@ -115,10 +148,9 @@ namespace RTPAudio.AudioUtils
 
         }
 
-
-
-
-
-
+        private void FindHeader(byte[] header, FileStream file)
+        {
+            
+        }
     }
 }
