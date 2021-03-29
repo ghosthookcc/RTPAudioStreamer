@@ -19,7 +19,24 @@ namespace RTPAudio.AudioUtils
                 { 0, 0, 0, 0 }, // Reserved
                 { 44100, 48000, 32000, 0 }, // MPEGI
                 { 22050, 24000, 16000, 0 } }; // MPEGII
-            enum Version
+
+            static readonly int[,,] bitratetable = new int[2, 3, 16] // values in kpbs
+            {
+                {
+                    {0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,999 },// Layer III
+                    {0,32,48,56,64,80,96,112,128,160,192,224,256,320,384,999 },// Layer II                             // MPEGI
+                    {0,32,64,96,128,160,192,224,256,288,320,352,384,416,448,999 } // Layer I
+                },
+                {
+                    {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,999 },// Layer III
+                    {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,999 },// Layer II                             // MPEGII and IIV
+                    {0,32,48,56,64,80,96,112,128,144,160,176,192,224,256,999 }//Layer I
+                }
+
+            };
+
+
+            public enum Version
             {
                 Reserved = 1, // Not Valid.
                 MPEGIIdotV = 0, //Version 2.5
@@ -28,25 +45,27 @@ namespace RTPAudio.AudioUtils
                 
 
             }
-            enum Layer
+            public enum Layer
             {
 
                 Reserved = 0, // Not Valid.
-                LayerI = 1,
+                LayerI = 3,
                 LayerII = 2,
-                LayerIII = 3,
+                LayerIII = 1,
             }
 
 
             public string file;
-            Version version;
-            Layer layer;
+            public Version version;
+            public Layer layer;
             bool protection;
             bool padding;
+            
 
             public int BitRate;
             public int SampleRate;
             public int Padding;
+            public int framelength;
 
             public bool hasID3;
             public byte[] ID3ver;
@@ -78,9 +97,37 @@ namespace RTPAudio.AudioUtils
                 return (uint)ID3size.Data;
             }
 
-            internal void GetHeaderData(byte[] header)
+            internal bool GetHeaderData(byte[] header)
             {
-                
+
+
+                version = (Version)(header[1] << 3 >> 6);
+                layer = (Layer)(header[1] << 5 >> 6);
+                int protectionnum = header[1] << 7 >> 7;
+                int bitratenum = header[2] >> 4;
+                int samplenum = header[2] << 4 >> 6;
+                int paddingbit = header[2] << 6 >> 7;
+                int channelmode = header[3] >> 6;
+
+                BitRate = bitratetable[(int)version, (int)layer, bitratenum];
+                if(BitRate == 999)
+                {
+                    throw new NotImplementedException("Bitrate invalid! implement check header function");
+                    //return false;
+                    
+                }
+                SampleRate = samplingratetable[(int)version, samplenum];
+                if(SampleRate == 0)
+                {
+                    throw new NotImplementedException("SampleRate invalid! implement check header function ");
+                    //return false;
+                }
+
+                framelength = (layer == Layer.LayerI) ? (12 * BitRate / SampleRate + paddingbit) * 4 : 144 * BitRate / SampleRate + paddingbit;
+
+
+
+                return true;
             }
         }
 
@@ -148,7 +195,7 @@ namespace RTPAudio.AudioUtils
 
         }
 
-        private void FindHeader(byte[] header, FileStream file)
+        protected void FindHeader(byte[] header, FileStream file)
         {
             
         }
