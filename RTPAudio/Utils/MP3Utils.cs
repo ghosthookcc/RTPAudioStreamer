@@ -14,7 +14,8 @@ namespace RTPAudio.AudioUtils
         //This Class Contains Functions and tools to determine information from MP3 files such as Bit Rate, Sampling, ect..... This should ONLY be used for the mp3 standard up to Version 2.5.
         public class Mp3Data
         {
-            static readonly int[,] samplingratetable = new int[4, 4] {
+            static readonly int[,] samplingratetable = new int[4, 4] // values in Hz
+            {
                 { 11025 , 12000, 8000, 0 }, // MPEGIIV
                 { 0, 0, 0, 0 }, // Reserved
                 { 44100, 48000, 32000, 0 }, // MPEGI
@@ -153,7 +154,7 @@ namespace RTPAudio.AudioUtils
 
                 if (Encoding.ASCII.GetString(isID3) == "ID3")
                 {
-                    byte flags;
+                    
                     byte[] size = new byte[4];
                     uint id3size;
 
@@ -167,7 +168,7 @@ namespace RTPAudio.AudioUtils
                     file.Position += id3size;
                     byte[] header = new byte[4];
                     file.Read(header, 0, 4);
-                    if (header[0] == 255)
+                    if (header[0] == 255) //check sync flag
                     {
                         if(header[1] >> 5 == 7)
                         {
