@@ -44,7 +44,7 @@ namespace file_splitter
         public float PacketizationTime, FrameSizeInMS;
         public float SampleRate;
 
-        public PacketBuilderParam()
+        public PacketBuilderParam(MP3Utils.Mp3Data mp3info)
         {
             Random rand = new Random();
 
@@ -52,13 +52,13 @@ namespace file_splitter
             sequence = Convert.ToUInt16(rand.Next(1000, 22745)); // A random value that increments by 1 for each following packet
             rtp_identifier = rand.Next(1001, 200000845); // Unique identifer to distinguish between rtp streams
 
-            int SamplesPerFrame = 1152;
-            int BitRate = 125 * 192; // Multiply 1kb with the bitrate (bitrate for mpeg 1 layer 3 is 192 or 128)
+            int SamplesPerFrame = (mp3info.layer == MP3Utils.Mp3Data.Layer.LayerI) ? 384 : 1152; //= 1152;
+            int BitRate = mp3info.BitRate; //= 125 * 192; // Multiply 1kb with the bitrate (bitrate for mpeg 1 layer 3 is 192 or 128)
 
-            SampleRate = 44100; // Sample rate of 441000 is enough, after this there is no noticable difference for most humans
+            SampleRate = mp3info.SampleRate;
             FrameSizeInMS = (float)(SamplesPerFrame / SampleRate) * 1000;
 
-            dataperpacket = (int)(SamplesPerFrame * BitRate / (SampleRate + 0)); // If padding is set it would be added to the end here but it will never be set
+            dataperpacket = mp3info.framelength; // If padding is set it would be added to the end here but it will never be set(ARE YOU SURE ABOUT THAT?!)
             PacketizationTime = 1000 / FrameSizeInMS;  // This signifies the amount of frames in a second (fps)
             frag_off = 0; // This value never changes for audio and is therefore 0
         }
@@ -76,10 +76,11 @@ namespace file_splitter
         public byte[] DEBUG_packet;
 
         MP3Utils mp3parser = new MP3Utils();
-        public PacketBuilderParam packetinfo = new PacketBuilderParam();
+        public PacketBuilderParam packetinfo;
         public PacketBuilder(string filepath)
         {
-            mp3parser.Open(filepath);
+            MP3Utils.Mp3Data mp3dat = mp3parser.Open(filepath);
+            packetinfo = new PacketBuilderParam(mp3dat);
             selectedfile = filepath;
             splitfiledata = BuildPayload(selectedfile);
             packets = BuildPacket(ref splitfiledata);
@@ -212,7 +213,7 @@ namespace file_splitter
 
         static void Main()
         {
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\Erik\Desktop\RTPAudio\RTPAudioStreamer\RTPAudio\01 Key.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\19erlind\Desktop\SuperNova Website\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
             EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.10.160"), 8080);
