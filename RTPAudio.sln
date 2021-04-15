@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTPAudio", "RTPAudio\RTPAudio.csproj", "{8A6A47EE-5C18-42B0-A773-2120E9EA56AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3B70537C-F260-4FDF-B609-10A481AF197B}"
-	ProjectSection(SolutionItems) = preProject
-		Backup.txt = Backup.txt
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
