@@ -1,0 +1,2 @@
+Play stream on rtp://IP:PORT :: ffplay -nodisp rtp://192.168.0.10:1234
+Check file information :: mp3info -p "MP3Version: %v\nMP3Layer: %L\nMP3Bitrate: %r\nMP3Samplerate: %Q\nMP3Paddingbit: %p\nMP3Channelmode: %o\n" UnlikePlutoEverythingBlack.mp3

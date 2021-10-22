@@ -10,14 +10,13 @@ namespace RTPAudio.Utils
         // all byte ot int conversion are based on Big Endian. For Little Endian use normal C# functions.
         public static byte[] UInt32ToByte(uint input)
         {
-            
+
             byte[] output = new byte[4];
 
             output[0] = (byte)(input >> 24);
             output[1] = (byte)(input >> 16);
             output[2] = (byte)(input >> 8);
             output[3] = (byte)(input >> 0);
-
 
             return output;
         }
@@ -61,4 +60,4 @@ namespace RTPAudio.Utils
 
         }
     }
-}   
+}

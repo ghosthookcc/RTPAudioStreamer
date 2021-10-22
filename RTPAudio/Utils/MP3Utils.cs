@@ -19,7 +19,8 @@ namespace RTPAudio.AudioUtils
                 { 11025 , 12000, 8000, 0 }, // MPEGIIV
                 { 0, 0, 0, 0 }, // Reserved
                 { 44100, 48000, 32000, 0 }, // MPEGI
-                { 22050, 24000, 16000, 0 } }; // MPEGII
+                { 22050, 24000, 16000, 0 } // MPEGII
+            };
 
             static readonly int[,,] bitratetable = new int[4, 4, 16] // values in kpbs
             {
@@ -44,13 +45,12 @@ namespace RTPAudio.AudioUtils
                 {
                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },//reserved
                     {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,999 },// Layer III
-                    {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,999 },// Layer II                             // MPEGII 
+                    {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,999 },// Layer II                             // MPEGII
                     {0,32,48,56,64,80,96,112,128,144,160,176,192,224,256,999 }//Layer I
                 }
-
             };
 
-            static readonly int[,] samplesperframes = new int[4,4] 
+            static readonly int[,] samplesperframes = new int[4,4]
             {
               //    Rsvd     3     2     1  < Layer  v Version
                 {0,576,1152,384 }, //       2.5
@@ -59,33 +59,27 @@ namespace RTPAudio.AudioUtils
                 {0,1152,1152,384 }  //       1
             };
 
-
-
             public enum Version
             {
                 Reserved = 1, // Not Valid.
                 MPEGIIdotV = 0, //Version 2.5
                 MPEGI = 2,
                 MPEGII = 3,
-                
-
             }
+
             public enum Layer
             {
-
                 Reserved = 0, // Not Valid.
                 LayerI = 3,
                 LayerII = 2,
                 LayerIII = 1,
             }
 
-
             public string file;
             public Version version;
             public Layer layer;
             bool protection;
             bool padding;
-            
 
             public int BitRate;
             public int SampleRate;
@@ -96,8 +90,7 @@ namespace RTPAudio.AudioUtils
             public byte[] ID3ver;
             public BitArray ID3Flags;
             uint ID3lengthnum;
-            
-            
+
             BitVector32 ID3size;
 
             BitVector32.Section[] ID3size_sections = new BitVector32.Section[4];
@@ -110,24 +103,14 @@ namespace RTPAudio.AudioUtils
                 for (int x = 1; x < ID3size_sections.GetLength(0); x++)
                 {
                     ID3size_sections[x] = BitVector32.CreateSection(127, ID3size_sections[x - 1]);
-
-
-
                 }
-
             }
+
             public uint GetID3Size(byte[] data)
             {
-
-
                 for (int x = data.Length - 1; x >= 0; x--)
                 {
                     ID3size[ID3size_sections[(ID3size_sections.GetLength(0) - 1) - x]] = data[x];
-
-
-
-
-
                 }
                 ID3lengthnum = (uint)ID3size.Data;
                 return (uint)ID3size.Data;
@@ -135,37 +118,40 @@ namespace RTPAudio.AudioUtils
 
             internal bool GetHeaderData(byte[] header)
             {
-
-
-                version = (Version)(header[1] << 3 >> 9);
-                layer = (Layer)(header[1] << 5 >> 11);
-                int protectionnum = header[1] << 7 >> 14;
+                version = (Version)(header[1] & (0b_000_11_00_0) >> 2);
+                Console.WriteLine("MP3Version = " + version);
+                layer = (Layer)(header[1] & (0b_000_00_11_0 >> 2));
+                Console.WriteLine("MP3Layer = " + layer);
+                int protectionnum = header[1] & (0b_000_00_00_1 >> 1);
                 int bitratenum = header[2] >> 4;
-                int samplenum = header[2] << 4 >> 10;
-                int paddingbit = header[2] << 6 >> 13;
-                int channelmode = header[3] >> 6;
-                if(version == Version.Reserved || layer == Layer.Reserved)
+                int samplenum = header[2] & (0b_0000_11_0_0 >> 2);
+                int paddingbit = header[2] & (0b_0000_00_1_0 >> 1);
+                int channelmode = header[3] & (0b_11_00_0_0_00 >> 2);
+                if (version == Version.Reserved || layer == Layer.Reserved)
                 {
                     throw new NotImplementedException("Layer or Version Invalid!" + "Version:" + version.ToString() + " Layer:" + layer.ToString());
                     //return false;
                 }
-                BitRate = bitratetable[(int)version, (int)layer, bitratenum] * 1000;
-                if(BitRate == 0)
+                BitRate = bitratetable[(int)version, (int)layer, bitratenum];
+                Console.WriteLine("MP3BitRate = " + BitRate + "kb/s");
+                if (BitRate == 0)
                 {
                     throw new NotImplementedException("Bitrate invalid! check header function");
                     //return false;
-                    
+
                 }
                 SampleRate = samplingratetable[(int)version, samplenum];
+                Console.WriteLine("MP3SampleRate = " + SampleRate + "Hz");
                 if(SampleRate == 0)
                 {
                     throw new NotImplementedException("SampleRate invalid! check header function ");
                     //return false;
                 }
 
+                Console.WriteLine("MP3Paddingbit = " + paddingbit);
+                Console.WriteLine("MP3Channelmode = " + channelmode);
+
                 framelength = (layer == Layer.LayerI) ? ((12 * BitRate / SampleRate) + paddingbit) * 4 : 144 * (BitRate * 1000) / SampleRate + paddingbit;
-
-
 
                 return true;
             }
@@ -190,10 +176,8 @@ namespace RTPAudio.AudioUtils
                 byte[] isID3 = new byte[3];
                 file.Read(isID3, 0, 3);
 
-
                 if (Encoding.ASCII.GetString(isID3) == "ID3")
                 {
-                    
                     byte[] size = new byte[4];
                     uint id3size;
 
@@ -216,20 +200,14 @@ namespace RTPAudio.AudioUtils
                     }
                     else
                     {
-                       
                         FindHeader(header,file);
                     }
-                    
+
                     byte[] readbytes = new byte[1000];
                     file.Position += Mp3info.framelength;
                     file.Read(readbytes, 0, 1000);
                     int offset_flength = Array.FindIndex(readbytes, x => x == 255);
                     int dist_fromlastheader = offset_flength + Mp3info.framelength;
-                    Console.WriteLine("huh");
-                    
-
-
-
                 }
                 else
                 {

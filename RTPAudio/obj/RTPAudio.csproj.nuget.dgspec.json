@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {}
+    "C:\\Users\\kaspe\\OneDrive\\Desktop\\RTPStreamer\\RTPAudio\\RTPAudio.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj": {
+    "C:\\Users\\kaspe\\OneDrive\\Desktop\\RTPStreamer\\RTPAudio\\RTPAudio.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
+        "projectUniqueName": "C:\\Users\\kaspe\\OneDrive\\Desktop\\RTPStreamer\\RTPAudio\\RTPAudio.csproj",
         "projectName": "RTPAudio",
-        "projectPath": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\RTPAudio.csproj",
-        "packagesPath": "C:\\Users\\Erik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Erik\\Desktop\\RTPAudio\\RTPAudioStreamer\\RTPAudio\\obj\\",
+        "projectPath": "C:\\Users\\kaspe\\OneDrive\\Desktop\\RTPStreamer\\RTPAudio\\RTPAudio.csproj",
+        "packagesPath": "C:\\Users\\kaspe\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kaspe\\OneDrive\\Desktop\\RTPStreamer\\RTPAudio\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Erik\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kaspe\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -57,7 +57,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }

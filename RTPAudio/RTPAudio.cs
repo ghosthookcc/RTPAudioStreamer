@@ -18,7 +18,7 @@ namespace file_splitter
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |V=2|P|X|  CC   |M|     PT      |       sequence number         |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                           timestamp                           | <-- 80 works idk why
+   |                           timestamp                           |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |           synchronization source (SSRC) identifier            |
    +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
@@ -33,7 +33,7 @@ namespace file_splitter
         public UInt32 timestamp;
         public UInt16 sequence;
         public UInt16 frag_off;
-        public int dataperpacket; //size of the payload. 
+        public int dataperpacket; //size of the payload.
         public byte byte1;//has rtp_version, rtp_padding, rtp_extension, rtp_csources_count;
         public byte byte2; // has  rtp_marker, rtp_payload_type;
         public int rtp_identifier;
@@ -71,7 +71,7 @@ namespace file_splitter
         public Queue<byte[]> splitfiledata;
         public Queue<byte[]> Headerqueue;
         public Queue<byte[]> packets;
-        
+
         public byte[] DEBUG_header;
         public byte[] DEBUG_packet;
 
@@ -101,7 +101,7 @@ namespace file_splitter
                     if (remainingbytes < packetinfo.dataperpacket)
                     {
                         file.Read(temparray, 0, Convert.ToInt32(remainingbytes));
-     
+
                         remainingbytes = remainingbytes - remainingbytes;
                     }
                     else
@@ -118,9 +118,8 @@ namespace file_splitter
             return filepackets;
         }
 
-        unsafe Queue<byte[]> BuildPacket(ref Queue<byte[]> payload) 
+        unsafe Queue<byte[]> BuildPacket(ref Queue<byte[]> payload)
         {
-            
             int remainingpackets = payload.Count;
 
             Queue<byte[]> packetlist = new Queue<byte[]>();
@@ -149,7 +148,6 @@ namespace file_splitter
                 byte[] ayyylmao = GeneralUtils.UInt16ToByte(*sequenceptr);
                 memes.Stop();
                 TimeSpan ts = memes.Elapsed;
-                Console.WriteLine(ts.TotalMilliseconds);
 
                 headeroffsetptr += 2;
 
@@ -160,7 +158,7 @@ namespace file_splitter
 
                 Buffer.MemoryCopy(identifierptr, headeroffsetptr, 5, sizeof(int));
                 ReverseByteOrder(headeroffsetptr, 4);
-                
+
 
                 for (int packetcount = 0; packetcount < remainingpackets; packetcount++)
                 {
@@ -213,10 +211,10 @@ namespace file_splitter
 
         static void Main()
         {
-            PacketBuilder packets = new PacketBuilder(@"C:\Users\19erlind\Desktop\SuperNova Website\RTPAudioStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
+            PacketBuilder packets = new PacketBuilder(@"C:\Users\kaspe\OneDrive\Desktop\RTPStreamer\RTPAudio\UnlikePlutoEverythingBlack.mp3");
 
             EndPoint RemoteEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 8079);
-            EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.10.160"), 8080);
+            EndPoint SendtoEP = new IPEndPoint(IPAddress.Parse("192.168.0.30"), 8080);
 
             Socket sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
